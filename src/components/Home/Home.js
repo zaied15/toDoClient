@@ -1,13 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const [posts, setPosts] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch("https://fierce-forest-67971.herokuapp.com/posts")
+      .then((res) => res.json())
+      .then((data) => setPosts(data));
+  }, []);
+
   const handleToDoList = (e) => {
     e.preventDefault();
     const toDoList = {
       title: e.target.title.value,
       description: e.target.description.value,
     };
-    fetch("http://localhost:5000/post", {
+    fetch("https://fierce-forest-67971.herokuapp.com/post", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -16,8 +26,23 @@ const Home = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        alert(e.target.title.value + " posted successfully");
+        navigate("/");
       });
+  };
+
+  const handleDelete = (id) => {
+    const confirm = window.confirm("Are you sure to delete?");
+    if (confirm) {
+      fetch(`https://fierce-forest-67971.herokuapp.com/post/${id}`, {
+        method: "DELETE",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          alert("successfully deleted");
+          console.log(data);
+        });
+    }
   };
   return (
     <div>
@@ -43,7 +68,33 @@ const Home = () => {
           value="Submit"
         />
       </form>
-      <div></div>
+      <div>
+        {posts.map((post) => (
+          <div
+            key={post._id}
+            style={{
+              border: "1px solid gray",
+              padding: "10px",
+              margin: "10px",
+              textAlign: "left",
+            }}
+          >
+            <h4>Title: {post.title}</h4>
+            <p>Description: {post.description}</p>
+            <button
+              style={{
+                border: "1px solid red",
+                padding: "5px",
+                width: "100px",
+                color: "red",
+              }}
+              onClick={() => handleDelete(post._id)}
+            >
+              Delete
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
