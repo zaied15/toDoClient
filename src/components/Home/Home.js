@@ -1,29 +1,49 @@
 import React from "react";
 
 const Home = () => {
+  const handleToDoList = (e) => {
+    e.preventDefault();
+    const toDoList = {
+      title: e.target.title.value,
+      description: e.target.description.value,
+    };
+    fetch("http://localhost:5000/post", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(toDoList),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
+  };
   return (
     <div>
-      <form>
+      <h2>Entry Your To Do List</h2>
+      <form onSubmit={handleToDoList}>
         <input
           style={{ width: "300px", padding: "10px", margin: "10px" }}
-          type="email"
-          name="email"
-          placeholder="Email"
+          type="text"
+          name="title"
+          placeholder="Title"
         />{" "}
         <br />
         <input
           style={{ width: "300px", padding: "10px", margin: "10px" }}
-          type="password"
-          name="password"
-          placeholder="Password"
+          type="text"
+          name="description"
+          placeholder="Description"
         />{" "}
         <br />
         <input
           style={{ width: "300px", padding: "10px", margin: "10px" }}
           type="submit"
-          value="Register"
+          value="Submit"
         />
       </form>
+      <div></div>
     </div>
   );
 };
